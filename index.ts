@@ -5,6 +5,8 @@ import { GarbageStorage } from "./garbage.storage";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { trpcRouter } from "./route";
 
+import cors from "cors";
+
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -17,6 +19,8 @@ const createContext = ({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
+
+app.use(cors());
 
 app.use(
   "/trpc",
