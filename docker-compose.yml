@@ -1,0 +1,10 @@
+version: "3.1"
+
+services:
+  garbage-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 5000:5000
