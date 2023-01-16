@@ -1,13 +1,21 @@
-FROM node:16
+FROM node:16 as builder
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY ./ ./
 
-COPY .env ./
+RUN npm ci
+RUN npm run build
 
-RUN npm ci --only=production
+FROM node:16 as runner
 
-COPY ./dist .
+WORKDIR /usr/src/app
+
+COPY ./package*.json ./
+COPY ./.env ./
+
+COPY --from=builder /usr/src/app/dist ./
+
+RUN npm ci --omit=dev
 
 CMD [ "node", "index.js" ]
