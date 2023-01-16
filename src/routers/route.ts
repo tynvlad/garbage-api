@@ -1,15 +1,15 @@
-import { garbageStorage } from ".";
-import { procedure, router } from "./trpc.init";
+import { garbageStorage } from "..";
+import { procedure, router } from "../trpc/trpc.init";
 
 import { z } from "zod";
-import { IGarbageModel } from "./garbage.model";
+import { IGarbageModel } from "../models/garbage.model";
 import { generateOpenApiDocument } from "trpc-openapi";
 
 export const garbageModelSchema = z.object({
   id: z.string(),
   name: z.string(),
-  createdDate: z.date(),
-  updatedDate: z.date(),
+  createdDate: z.coerce.date(),
+  updatedDate: z.coerce.date(),
   link: z.string(),
   comment: z.string(),
   tags: z.array(z.string()),
@@ -47,7 +47,11 @@ export const trpcRouter = router({
     .query(({ input }) => garbageStorage.removeGarbage(input.id)),
   "update-garbage": procedure
     .meta({
-      openapi: { method: "POST", path: "/update-garbage", tags: ["garbage"] },
+      openapi: {
+        method: "POST",
+        path: "/update-garbage/{id}",
+        tags: ["garbage"],
+      },
     })
     .input(garbageModelSchema)
     .output(garbageModelSchema)

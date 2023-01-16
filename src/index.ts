@@ -1,9 +1,9 @@
 import express from "express";
 
 import * as dotenv from "dotenv";
-import { GarbageStorage } from "./garbage.storage";
+import { GarbageStorage } from "./storage/garbage.storage";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { openApiDocument, trpcRouter } from "./route";
+import { openApiDocument, trpcRouter } from "./routers/route";
 
 import cors from "cors";
 import { createOpenApiExpressMiddleware } from "trpc-openapi";
