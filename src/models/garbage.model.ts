@@ -1,12 +1,6 @@
-export interface IGarbageModel {
-  id: string;
-  name: string;
-  createdDate: Date;
-  updatedDate: Date;
-  link: string;
-  comment: string;
-  tags: string[];
-}
+import { z } from "zod";
+import { garbageModelSchema, garbageModelSchemaDTO } from "../trpc/schemas";
 
-export interface IGarbageModelDTO
-  extends Omit<IGarbageModel, "id" | "createdDate" | "updatedDate"> {}
+export type GarbageModel = z.infer<typeof garbageModelSchema>;
+
+export type GarbageModelDTO = z.infer<typeof garbageModelSchemaDTO>;

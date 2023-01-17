@@ -3,16 +3,17 @@ import express from "express";
 import * as dotenv from "dotenv";
 import { GarbageStorage } from "./storage/garbage.storage";
 import * as trpcExpress from "@trpc/server/adapters/express";
-import { openApiDocument, trpcRouter } from "./routers/route";
+import { trpcRouter } from "./routers/route";
 
 import cors from "cors";
 import { createOpenApiExpressMiddleware } from "trpc-openapi";
 
 import * as swaggerUi from "swagger-ui-express";
+import { openApiDocument } from "./routers/documents";
 
 dotenv.config();
 
-const port = process.env.PORT || 3000;
+export const PORT = process.env.PORT || 3000;
 
 export const garbageStorage = new GarbageStorage();
 
@@ -43,6 +44,6 @@ app.use(
 app.use("/", swaggerUi.serve);
 app.get("/", swaggerUi.setup(openApiDocument));
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });

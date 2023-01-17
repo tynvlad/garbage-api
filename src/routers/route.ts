@@ -1,43 +1,26 @@
-import { garbageStorage } from "..";
+import { garbageStorage, PORT } from "../index";
 import { procedure, router } from "../trpc/trpc.init";
 
 import { z } from "zod";
-import { IGarbageModel } from "../models/garbage.model";
-import { generateOpenApiDocument } from "trpc-openapi";
 
-export const garbageModelSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  createdDate: z.coerce.date(),
-  updatedDate: z.coerce.date(),
-  link: z.string(),
-  comment: z.string(),
-  tags: z.array(z.string()),
-});
-
-export const garbageModelSchemaDTO = z.object({
-  name: z.string(),
-  link: z.string(),
-  comment: z.string(),
-  tags: z.array(z.string()),
-});
+import { garbageModelSchema, garbageModelSchemaDTO } from "../trpc/schemas";
+import {
+  getAllGarbageApiMeta,
+  removeGarbageApiMeta,
+  updateGarbageApiMeta,
+  createGarbageApiMeta,
+} from "./documents";
 
 export const trpcRouter = router({
+  /** Get full list garbages*/
   "get-garbages": procedure
-    .meta({
-      openapi: { method: "GET", path: "/get-garbages", tags: ["garbage"] },
-    })
+    .meta(getAllGarbageApiMeta)
     .input(z.void())
     .output(z.array(garbageModelSchema))
     .query(() => garbageStorage.getGarbageList()),
+  /** Remove garbage*/
   "remove-garbage": procedure
-    .meta({
-      openapi: {
-        method: "GET",
-        path: "/remove-garbage/{id}",
-        tags: ["garbage"],
-      },
-    })
+    .meta(removeGarbageApiMeta)
     .input(
       z.object({
         id: z.string(),
@@ -45,36 +28,18 @@ export const trpcRouter = router({
     )
     .output(z.void())
     .query(({ input }) => garbageStorage.removeGarbage(input.id)),
+  /** Update garbage */
   "update-garbage": procedure
-    .meta({
-      openapi: {
-        method: "POST",
-        path: "/update-garbage/{id}",
-        tags: ["garbage"],
-      },
-    })
+    .meta(updateGarbageApiMeta)
     .input(garbageModelSchema)
     .output(garbageModelSchema)
     .mutation(({ input }) => garbageStorage.updateGarbage(input)),
+  /** Create garbage */
   "create-garbage": procedure
-    .meta({
-      openapi: {
-        method: "POST",
-        path: "/create-garbage",
-        tags: ["garbage"],
-      },
-    })
+    .meta(createGarbageApiMeta)
     .input(garbageModelSchemaDTO)
     .output(garbageModelSchema)
     .mutation(({ input }) => garbageStorage.addGarbage(input)),
-});
-
-export const openApiDocument = generateOpenApiDocument(trpcRouter, {
-  title: "Example CRUD API",
-  description: "OpenAPI compliant REST API built using tRPC with Express",
-  version: "1.0.0",
-  baseUrl: "http://localhost:5000/api",
-  tags: ["garbage"],
 });
 
 export type AppRouter = typeof trpcRouter;

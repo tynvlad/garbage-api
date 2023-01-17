@@ -1,11 +1,11 @@
-import { IGarbageModel, IGarbageModelDTO } from "../models/garbage.model";
+import { GarbageModel, GarbageModelDTO } from "../models/garbage.model";
 import * as uuid from "uuid";
 
 export class GarbageStorage {
-  private garbages = new Map<String, IGarbageModel>();
+  private garbages = new Map<String, GarbageModel>();
 
-  public addGarbage(newGarbage: IGarbageModelDTO): IGarbageModel {
-    const garbage: IGarbageModel = {
+  public addGarbage(newGarbage: GarbageModelDTO): GarbageModel {
+    const garbage: GarbageModel = {
       ...newGarbage,
       id: uuid.v4(),
       createdDate: new Date(),
@@ -21,11 +21,11 @@ export class GarbageStorage {
     this.garbages.delete(removedId);
   }
 
-  public getGarbageList(): IGarbageModel[] {
+  public getGarbageList(): GarbageModel[] {
     return [...this.garbages.values()];
   }
 
-  public updateGarbage(garbage: IGarbageModel): IGarbageModel {
+  public updateGarbage(garbage: GarbageModel): GarbageModel {
     let updated = this.garbages.get(garbage.id);
 
     if (!updated) {
