@@ -1,15 +1,41 @@
-import { garbageStorage, PORT } from "../index";
+import { garbageStorage } from "../index";
 import { procedure, router } from "../trpc/trpc.init";
 
 import { z } from "zod";
 
 import { garbageModelSchema, garbageModelSchemaDTO } from "../trpc/schemas";
-import {
-  getAllGarbageApiMeta,
-  removeGarbageApiMeta,
-  updateGarbageApiMeta,
-  createGarbageApiMeta,
-} from "./documents";
+
+import { OpenApiMeta } from "trpc-openapi";
+
+const garbageRequestTag = "garbage" as const;
+
+const getAllGarbageApiMeta: OpenApiMeta = {
+  openapi: { method: "GET", path: "/get-garbages", tags: [garbageRequestTag] },
+};
+
+const createGarbageApiMeta: OpenApiMeta = {
+  openapi: {
+    method: "POST",
+    path: "/create-garbage",
+    tags: [garbageRequestTag],
+  },
+};
+
+const updateGarbageApiMeta: OpenApiMeta = {
+  openapi: {
+    method: "POST",
+    path: "/update-garbage/{id}",
+    tags: [garbageRequestTag],
+  },
+};
+
+const removeGarbageApiMeta: OpenApiMeta = {
+  openapi: {
+    method: "GET",
+    path: "/remove-garbage/{id}",
+    tags: [garbageRequestTag],
+  },
+};
 
 export const trpcRouter = router({
   /** Get full list garbages*/
@@ -26,7 +52,7 @@ export const trpcRouter = router({
         id: z.string(),
       })
     )
-    .output(z.void())
+    .output(garbageModelSchema)
     .query(({ input }) => garbageStorage.removeGarbage(input.id)),
   /** Update garbage */
   "update-garbage": procedure

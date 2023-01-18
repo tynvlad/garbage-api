@@ -1,19 +1,21 @@
 import express from "express";
 
 import * as dotenv from "dotenv";
-import { GarbageStorage } from "./storage/garbage.storage";
+import { GarbageStorage } from "./storage/garbage.db.service";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { trpcRouter } from "./routers/route";
 
 import cors from "cors";
-import { createOpenApiExpressMiddleware } from "trpc-openapi";
+import {
+  createOpenApiExpressMiddleware,
+  generateOpenApiDocument,
+} from "trpc-openapi";
 
 import * as swaggerUi from "swagger-ui-express";
-import { openApiDocument } from "./routers/documents";
 
 dotenv.config();
 
-export const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 export const garbageStorage = new GarbageStorage();
 
@@ -40,9 +42,17 @@ app.use(
   createOpenApiExpressMiddleware({ router: trpcRouter, createContext })
 );
 
+const restDocument = generateOpenApiDocument(trpcRouter, {
+  title: "Example CRUD API",
+  description: "OpenAPI compliant REST API built using tRPC with Express",
+  version: "1.0.0",
+  baseUrl: `http://localhost:3000/api`,
+  tags: ["garbage"],
+});
+
 // Serve Swagger UI with our OpenAPI schema
 app.use("/", swaggerUi.serve);
-app.get("/", swaggerUi.setup(openApiDocument));
+app.get("/", swaggerUi.setup(restDocument));
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);

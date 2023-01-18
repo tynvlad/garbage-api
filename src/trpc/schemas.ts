@@ -10,7 +10,7 @@ export const garbageModelSchemaDTO = z.object({
 export const garbageModelSchema = z
   .object({
     id: z.string(),
-    createdDate: z.coerce.date(),
-    updatedDate: z.coerce.date(),
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
   })
   .merge(garbageModelSchemaDTO);
